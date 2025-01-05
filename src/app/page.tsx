@@ -68,8 +68,7 @@ async function FeaturedProducts() {
         {featuredProducts.items.map((product) => (
           <Product key={product._id} product={product} />
         ))}
-      </div>
-      <pre>{JSON.stringify(featuredProducts, null, 2)}</pre>
+      </div>      
     </div>
   );
 }
