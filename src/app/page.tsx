@@ -8,6 +8,7 @@ import { Suspense } from "react";
 import { getWixClient } from "@/lib/wix-client.base";
 import Product from "@/components/Product";
 import LoadingProductSkeleton from "@/components/LoadingProductSkeleton";
+import { queryProducts } from "./wix-api/product";
 
 export default function Home() {
   return (
@@ -51,11 +52,10 @@ async function FeaturedProducts() {
     return null;
   }
 
-  const featuredProducts = await wixClient.products
-    .queryProducts()
-    .hasSome("collectionIds", [collection._id])
-    .descending("lastUpdated")
-    .find();
+  const featuredProducts = await queryProducts({
+    collectionIds: collection._id,
+    sort: "last_update",
+  });
 
   if (!featuredProducts.items.length) {
     return null;
@@ -68,7 +68,7 @@ async function FeaturedProducts() {
         {featuredProducts.items.map((product) => (
           <Product key={product._id} product={product} />
         ))}
-      </div>      
+      </div>
     </div>
   );
 }
