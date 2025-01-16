@@ -11,6 +11,7 @@ export async function queryProducts({
   collectionIds,
   sort = "last_update",
 }: IProducts) {
+
   const wixClient = getWixClient();
 
   let query = wixClient.products.queryProducts();
@@ -21,9 +22,12 @@ export async function queryProducts({
       : [collectionIds]
     : [];
 
+    
+
   if (collectionIdsArray.length > 0) {
-    query = query.hasSome("collectionIds", [collectionIdsArray]);
+    query = query.hasSome("collectionIds", collectionIdsArray);
   }
+  
 
   switch (sort) {
     case "price_asc":
@@ -38,4 +42,23 @@ export async function queryProducts({
   }
 
   return query.find();
+}
+
+export async function getProductBySlug(slug: string) {
+
+  const wixClient = getWixClient();
+
+  const {items} = await wixClient.products
+    .queryProducts()
+    .eq("slug", slug)
+    .limit(1)
+    .find();
+
+  const product = items[0]
+
+  if(!product || !product.visible){
+    return null;
+  }
+  
+  return product;
 }

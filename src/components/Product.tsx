@@ -10,7 +10,7 @@ interface ProductProps {
 }
 
 export default function Product({ product }: ProductProps) {
-  const mainImage = product.media?.mainMedia?.image;
+  const mainImage = product.media?.mainMedia?.image;  
 
   return (
     <Link href={`/products/${product.slug}`} className="border h-full">
