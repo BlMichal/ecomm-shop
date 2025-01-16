@@ -3,9 +3,10 @@
 import Badge from "@/components/ui/badge";
 import WixImage from "@/components/WixImage";
 import { products } from "@wix/stores";
-import { Divide } from "lucide-react";
 import ProductOptions from "./ProductOptions";
 import { useState } from "react";
+import { checkInStock, findVariant } from "@/lib/utils";
+import ProductPrice from "./ProductPrice";
 
 interface IProductDetails {
   product: products.Product;
@@ -13,6 +14,7 @@ interface IProductDetails {
 
 export default function ProductDetails({ product }: IProductDetails) {
   const [quantity, setQuantity] = useState(1);
+
   const [selectedOptions, setSelectedOptions] = useState<
     Record<string, string>
   >(
@@ -21,7 +23,11 @@ export default function ProductDetails({ product }: IProductDetails) {
         [option.name || ""]: option.choices?.[0].description || "",
       }))
       ?.reduce((acc, curr) => ({ ...acc, ...curr }), {}) || {},
-  );
+  ); // Defaultně nastaví první hodnotu v checkboxu
+
+  const selectedVariant = findVariant(product, selectedOptions);
+
+  const inStock = checkInStock(product, selectedOptions);
 
   return (
     <div className="flex flex-col gap-10 md:flex-row lg:gap-20">
@@ -48,11 +54,13 @@ export default function ProductDetails({ product }: IProductDetails) {
             className="prose dark:prose-invert"
           ></div>
         )}
+        <ProductPrice product={product} selectedVariant={selectedVariant} />
         <ProductOptions
           product={product}
           selectedOptions={selectedOptions}
           setSelectedOptions={setSelectedOptions}
         />
+        <div>{JSON.stringify(selectedVariant?.choices)}</div>
       </div>
     </div>
   );

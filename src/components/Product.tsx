@@ -10,10 +10,10 @@ interface ProductProps {
 }
 
 export default function Product({ product }: ProductProps) {
-  const mainImage = product.media?.mainMedia?.image;  
+  const mainImage = product.media?.mainMedia?.image;
 
   return (
-    <Link href={`/products/${product.slug}`} className="border h-full">
+    <Link href={`/product/${product.slug}`} className="border h-full">
       <div className="relative overflow-hidden">
         <WixImage
           width={700}

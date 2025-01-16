@@ -41,27 +41,23 @@ export default function Home() {
 }
 
 async function FeaturedProducts() {
-  await delay(1000);
-
   const wixClient = getWixClient();
 
   const { collection } =
     await wixClient.collections.getCollectionBySlug("oblíbené-produkty");
 
-  
-    if (!collection?._id) {
-      return null;
-    }
+  if (!collection?._id) {
+    return null;
+  }
 
   const featuredProducts = await queryProducts({
     collectionIds: collection._id,
     sort: "last_update",
   });
-  
 
-    if (!featuredProducts.items.length) {
-      return null;
-    }
+  if (!featuredProducts.items.length) {
+    return null;
+  }
 
   return (
     <div className="space-y-5">
