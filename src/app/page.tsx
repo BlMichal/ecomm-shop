@@ -3,7 +3,6 @@ import banner from "../assets/Your-Logo-here.png";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { delay } from "@/lib/utils";
 import { Suspense } from "react";
 import { getWixClient } from "@/lib/wix-client.base";
 import Product from "@/components/Product";

@@ -1,4 +1,5 @@
 import { getWixClient } from "@/lib/wix-client.base";
+import { cache } from "react";
 
 type ProductSort = "last_update" | "price_asc" | "price_desc";
 
@@ -11,7 +12,6 @@ export async function queryProducts({
   collectionIds,
   sort = "last_update",
 }: IProducts) {
-
   const wixClient = getWixClient();
 
   let query = wixClient.products.queryProducts();
@@ -22,12 +22,9 @@ export async function queryProducts({
       : [collectionIds]
     : [];
 
-    
-
   if (collectionIdsArray.length > 0) {
     query = query.hasSome("collectionIds", collectionIdsArray);
   }
-  
 
   switch (sort) {
     case "price_asc":
@@ -44,21 +41,20 @@ export async function queryProducts({
   return query.find();
 }
 
-export async function getProductBySlug(slug: string) {
-
+export const getProductBySlug = cache(async (slug: string) => {
   const wixClient = getWixClient();
 
-  const {items} = await wixClient.products
+  const { items } = await wixClient.products
     .queryProducts()
     .eq("slug", slug)
     .limit(1)
     .find();
 
-  const product = items[0]
+  const product = items[0];
 
-  if(!product || !product.visible){
+  if (!product || !product.visible) {
     return null;
   }
-  
+
   return product;
-}
+});

@@ -6,6 +6,8 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+@import "~react-medium-image-zoom/dist/styles.css";
+
 @layer base {
   :root {
     --background: 0 0% 100%;
