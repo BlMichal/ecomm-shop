@@ -9,6 +9,13 @@ import ProductPrice from "./ProductPrice";
 import ProductMedia from "./ProductMedia";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { InfoIcon } from "lucide-react";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 interface IProductDetails {
   product: products.Product;
@@ -17,6 +24,7 @@ interface IProductDetails {
 export default function ProductDetails({ product }: IProductDetails) {
   const [quantity, setQuantity] = useState(1);
 
+  // Defaultně nastaví první hodnotu v checkboxu
   const [selectedOptions, setSelectedOptions] = useState<
     Record<string, string>
   >(
@@ -25,7 +33,7 @@ export default function ProductDetails({ product }: IProductDetails) {
         [option.name || ""]: option.choices?.[0].description || "",
       }))
       ?.reduce((acc, curr) => ({ ...acc, ...curr }), {}) || {},
-  ); // Defaultně nastaví první hodnotu v checkboxu
+  );
 
   const selectedVariant = findVariant(product, selectedOptions);
 
@@ -37,9 +45,22 @@ export default function ProductDetails({ product }: IProductDetails) {
   const availableQuantityExceeded =
     !!availableQuantity && quantity > availableQuantity;
 
+  const selectedOptionMedia = product.productOptions?.flatMap((option) => {
+    const selectedChoice = option.choices?.find(
+      (choice) => choice.description === selectedOptions[option.name || ""],
+    );
+    return selectedChoice?.media?.items ?? [];
+  });
+
   return (
     <div className="flex flex-col gap-10 md:flex-row lg:gap-20">
-      <ProductMedia media={product.media?.items} />
+      <ProductMedia
+        media={
+          !!selectedOptionMedia?.length
+            ? selectedOptionMedia
+            : product.media?.items
+        }
+      />
       <div className="basis-3/5 space-y-4">
         <div className="space-y-2.5">
           <h1 className="text-3xl font-bold lg:text-4xl">{product.name}</h1>
@@ -52,35 +73,65 @@ export default function ProductDetails({ product }: IProductDetails) {
           <div
             dangerouslySetInnerHTML={{ __html: product.description }}
             className="prose dark:prose-invert"
-          ></div>
+          />
         )}
         <ProductPrice product={product} selectedVariant={selectedVariant} />
         <ProductOptions
           product={product}
           selectedOptions={selectedOptions}
           setSelectedOptions={setSelectedOptions}
-        />
-        <div>{JSON.stringify(selectedVariant?.choices)}</div>
+        />        
         <div className="space-y-1.5">
-          <Label htmlFor="quantity">Množství</Label>
+          <Label htmlFor="quantity">Množství:</Label>
           <div className="flex items-center gap-2.5">
-            <Input
-              name="quantity"
-              type="number"
-              value={quantity}
-              onChange={(e) => setQuantity(Number(e.target.value))}
-              className="w-24"
-              disabled={!inStock}
-            />
-            {!!availableQuantity &&
-              (availableQuantityExceeded ||
-                (availableQuantity < 10 && (
-                  <span className="text-destructive">
-                    Počet kusů: {availableQuantity}
-                  </span>
-                )))}
+            {availableQuantity !== 0 ? (
+              <>
+                <Input
+                  name="quantity"
+                  type="number"
+                  value={quantity}
+                  onChange={(e) => setQuantity(Number(e.target.value))}
+                  className="w-24"
+                  disabled={!inStock}
+                />
+                {!!availableQuantity &&
+                  (availableQuantityExceeded ||
+                    (availableQuantity < 10 && (
+                      <span className="text-destructive">
+                        Zbývá jen: {availableQuantity}
+                      </span>
+                    )))}
+              </>
+            ) : (
+              <span className="py-2 text-destructive font-semibold">
+                VYPRODÁNO
+              </span>
+            )}
           </div>
         </div>
+        {!!product.additionalInfoSections?.length && (
+          <div className="space-y-1.5 text-sm text-muted-foreground">
+            <span className="flex items-center gap-2">
+              <InfoIcon className="size-5" />
+              <span>Informace o produktu</span>
+            </span>
+            <Accordion type="multiple">
+              {product.additionalInfoSections.map((section) => (
+                <AccordionItem key={section.title} value={section.title || ""}>
+                  <AccordionTrigger>{section.title}</AccordionTrigger>
+                  <AccordionContent>
+                    <div
+                      className="prose text-sm text-muted-foreground dark:prose-invert"
+                      dangerouslySetInnerHTML={{
+                        __html: section.description || "",
+                      }}
+                    />
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          </div>
+        )}
       </div>
     </div>
   );

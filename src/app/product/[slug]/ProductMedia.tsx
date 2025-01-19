@@ -2,8 +2,8 @@ import WixImage from "@/components/WixImage";
 import { cn } from "@/lib/utils";
 import { products } from "@wix/stores";
 import { PlayIcon } from "lucide-react";
-import { useState } from "react";
-import Zoom from 'react-medium-image-zoom'
+import { useEffect, useState } from "react";
+import Zoom from "react-medium-image-zoom";
 
 interface IProductMedia {
   media: products.MediaItem[] | undefined;
@@ -11,6 +11,11 @@ interface IProductMedia {
 
 export default function ProductMedia({ media }: IProductMedia) {
   const [selectedMedia, setSelectedMedia] = useState(media?.[0]);
+
+  // Pokud volíme jíne option produktu, vybrat první fotografii, která je specifická pro dané option produktu
+  useEffect(() => {
+    setSelectedMedia(media?.[0]);
+  }, [media]);
 
   if (!media?.length) return null;
 
@@ -29,7 +34,7 @@ export default function ProductMedia({ media }: IProductMedia) {
               mediaIdentifier={selectedImage.url}
               alt={selectedImage.altText}
               className="sticky top-0"
-            />            
+            />
           </Zoom>
         ) : selectedVideo?.url ? (
           <div className="flex size-full items-center bg-black">
@@ -91,8 +96,11 @@ function MediaPreview({ mediaItem, isSeleted, onSelect }: IMediaPreview) {
         height={100}
         onMouseEnter={onSelect}
       />
-      {resolvedThumbnailUrl && <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-black/40 rounded-full flex items-center justify-center size-10">
-        <PlayIcon className="size-6 text-white/70"/></span>}
+      {resolvedThumbnailUrl && (
+        <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-black/40 rounded-full flex items-center justify-center size-10">
+          <PlayIcon className="size-6 text-white/70" />
+        </span>
+      )}
     </div>
   );
 }
