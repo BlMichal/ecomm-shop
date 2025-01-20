@@ -16,6 +16,8 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import AddToCartButton from "@/components/AddToCartButton";
+import { Button } from "@/components/ui/button";
 
 interface IProductDetails {
   product: products.Product;
@@ -80,7 +82,7 @@ export default function ProductDetails({ product }: IProductDetails) {
           product={product}
           selectedOptions={selectedOptions}
           setSelectedOptions={setSelectedOptions}
-        />        
+        />
         <div className="space-y-1.5">
           <Label htmlFor="quantity">Množství:</Label>
           <div className="flex items-center gap-2.5">
@@ -109,6 +111,15 @@ export default function ProductDetails({ product }: IProductDetails) {
             )}
           </div>
         </div>
+        {inStock ? (
+          <AddToCartButton
+            product={product}
+            selectedOptions={selectedOptions}
+            quantity={quantity}
+          />
+        ) : (
+          <Button disabled className="line-through">Přidat do košíku</Button>
+        )}
         {!!product.additionalInfoSections?.length && (
           <div className="space-y-1.5 text-sm text-muted-foreground">
             <span className="flex items-center gap-2">
