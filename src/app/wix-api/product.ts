@@ -1,4 +1,4 @@
-import { getWixClient } from "@/lib/wix-client.base";
+import { getWixClient, wixClient } from "@/lib/wix-client.base";
 import { cache } from "react";
 
 type ProductSort = "last_update" | "price_asc" | "price_desc";
@@ -8,11 +8,11 @@ interface IProducts {
   sort?: ProductSort;
 }
 
-export async function queryProducts({
+export async function queryProducts( wixClient: wixClient,{
   collectionIds,
   sort = "last_update",
 }: IProducts) {
-  const wixClient = getWixClient();
+
 
   let query = wixClient.products.queryProducts();
 
@@ -41,8 +41,7 @@ export async function queryProducts({
   return query.find();
 }
 
-export const getProductBySlug = cache(async (slug: string) => {
-  const wixClient = getWixClient();
+export const getProductBySlug = cache(async ( wixClient: wixClient,slug: string) => {
 
   const { items } = await wixClient.products
     .queryProducts()

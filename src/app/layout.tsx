@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Lora} from "next/font/google";
+import { Geist, Geist_Mono, Lora } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-
+import ReactQueryProvider from "./ReactQueryProvider";
+import { Toaster } from "@/components/ui/toaster";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -15,15 +16,15 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const lora = Lora({  
+const lora = Lora({
   variable: "--font-lora",
   subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
   title: {
-    template : '%s | SHOP',
-    absolute: "SHOP"
+    template: "%s | SHOP",
+    absolute: "SHOP",
   },
   description: "Ecomm APP",
 };
@@ -38,9 +39,12 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${lora.variable} antialiased`}
       >
-        <Navbar/>
-        {children}
-        <Footer/>
+        <ReactQueryProvider>
+          <Navbar />
+          {children}
+          <Footer />
+        </ReactQueryProvider>
+        <Toaster />
       </body>
     </html>
   );

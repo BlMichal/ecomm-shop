@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import ProductDetails from "./ProductDetails";
 import { Metadata } from "next";
 import { delay } from "@/lib/utils";
+import { getWixServerClient } from "@/lib/wix-client.server";
 
 interface IAppProps {
   params: { slug: string };
@@ -13,7 +14,7 @@ export async function generateMetadata({
 }: IAppProps): Promise<Metadata> {
   const { slug } = await params;
 
-  const product = await getProductBySlug(slug);
+  const product = await getProductBySlug(await getWixServerClient(),slug);
 
   if (!product?._id) {
     return notFound();
@@ -44,7 +45,7 @@ export default async function Page({ params }: IAppProps) {
   //NEXT15 dynamic api jsou asynchroní, proto je potřeba await params
   const { slug } = await params;
 
-  const product = await getProductBySlug(slug);
+  const product = await getProductBySlug(await getWixServerClient(),slug);
 
   if (!product?._id) {
     return notFound();

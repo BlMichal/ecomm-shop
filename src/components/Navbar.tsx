@@ -1,15 +1,14 @@
+import ShoppingCartButton from "@/app/ShoppingCartButton";
 import { getCart } from "@/app/wix-api/cart";
 import logo from "@/assets/logo-navbar.png";
+import { getWixServerClient } from "@/lib/wix-client.server";
 import Image from "next/image";
 import Link from "next/link";
 
 
 
 export default async function Navbar() {
-  const cart = await getCart();
-
-  const totalQuantity =
-    cart?.lineItems.reduce((acc, item) => acc + (item.quantity || 0), 0) || 0;
+  const cart = await getCart(await getWixServerClient());
 
   return (
     <header className="bg-background border-b-2">
@@ -18,7 +17,7 @@ export default async function Navbar() {
           <Image src={logo} alt="Flow Shop logo" width={100} height={60} />
         </Link>
         <span>
-        {totalQuantity} v košíku
+        <ShoppingCartButton initialData={cart} />
         </span>
       </div>
     </header>

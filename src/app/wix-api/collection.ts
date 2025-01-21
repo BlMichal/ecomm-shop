@@ -1,7 +1,6 @@
-import { getWixClient } from "@/lib/wix-client.base";
+import { getWixClient, wixClient } from "@/lib/wix-client.base";
 
-export async function getCollectionBySlug(slug: string) {
-  const wixClient = getWixClient();
+export async function getCollectionBySlug( wixClient: wixClient,slug: string) {
 
   const { collection } = await wixClient.collections.getCollectionBySlug(slug);
 

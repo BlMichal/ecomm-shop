@@ -4,10 +4,11 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Suspense } from "react";
-import { getWixClient } from "@/lib/wix-client.base";
 import Product from "@/components/Product";
 import LoadingProductSkeleton from "@/components/LoadingProductSkeleton";
 import { queryProducts } from "./wix-api/product";
+import { getWixServerClient } from "@/lib/wix-client.server";
+import { getCollectionBySlug } from "./wix-api/collection";
 
 export default function Home() {
   return (
@@ -40,16 +41,14 @@ export default function Home() {
 }
 
 async function FeaturedProducts() {
-  const wixClient = getWixClient();
-
-  const { collection } =
-    await wixClient.collections.getCollectionBySlug("oblíbené-produkty");
+  const wixClient = await getWixServerClient();
+  const collection = await getCollectionBySlug(wixClient, "oblíbené-produkty");
 
   if (!collection?._id) {
     return null;
   }
 
-  const featuredProducts = await queryProducts({
+  const featuredProducts = await queryProducts(wixClient, {
     collectionIds: collection._id,
     sort: "last_update",
   });
