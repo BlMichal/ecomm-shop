@@ -116,6 +116,7 @@ export default function ProductDetails({ product }: IProductDetails) {
             product={product}
             selectedOptions={selectedOptions}
             quantity={quantity}
+            disabled={availableQuantityExceeded || quantity < 1}           
           />
         ) : (
           <Button disabled className="line-through">Přidat do košíku</Button>
