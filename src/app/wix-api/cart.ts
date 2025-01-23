@@ -9,8 +9,7 @@ export async function getCart(wixClient: wixClient,) {
   try {
     return await wixClient.currentCart.getCurrentCart();
   } catch (error) {
-    if (
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    if (     
       (error as any).details.applicationError.code === "OWNED_CART_NOT_FOUND"
     ) {
       return null;

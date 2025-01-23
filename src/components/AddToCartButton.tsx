@@ -18,17 +18,17 @@ export default function AddToCartButton({
   className,
   ...props
 }: IAddToCartButton) {
-  const mutation = useAddToCart();
+  const {mutate,isPending} = useAddToCart();
   return (
     <LoadingButton
       onClick={() =>
-        mutation.mutate({
+        mutate({
           product,
           selectedOptions,
           quantity,
         })
       }
-      loading={mutation.isPending}
+      loading={isPending}
       className={cn("flex gap-3", className)}
       {...props}
     >
