@@ -1,5 +1,4 @@
 import { env } from "@/env";
-import { middleware } from "@/middleware";
 import {
   backInStockNotifications,
   checkout,
@@ -36,4 +35,4 @@ export function getWixClient(tokens: Tokens | undefined) {
   });
 }
 
-export type wixClient = ReturnType<typeof getWixClient>;
+export type WixClient = ReturnType<typeof getWixClient>;

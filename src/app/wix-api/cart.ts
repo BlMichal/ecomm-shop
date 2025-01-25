@@ -1,21 +1,27 @@
 import { WIX_STORES_APP_ID } from "@/lib/constants";
 import { findVariant } from "@/lib/utils";
-import { wixClient } from "@/lib/wix-client.base";
-
+import { WixClient } from "@/lib/wix-client.base";
 import { products } from "@wix/stores";
 
-export async function getCart(wixClient: wixClient,) {
+interface ApplicationError {
+  details: {
+    applicationError: {
+      code: string;
+    };
+  };
+}
 
+export async function getCart(wixClient: WixClient) {
   try {
     return await wixClient.currentCart.getCurrentCart();
   } catch (error) {
-    if (     
-      (error as any).details.applicationError.code === "OWNED_CART_NOT_FOUND"
+    if (
+      (error as ApplicationError).details.applicationError.code ===
+      "OWNED_CART_NOT_FOUND"
     ) {
       return null;
-    } else {
-      throw error;
     }
+    throw error;
   }
 }
 
@@ -26,7 +32,7 @@ interface AddToCartValues {
 }
 
 export async function addToCart(
-  wixClient: wixClient,
+  wixClient: WixClient,
   { product, selectedOptions, quantity }: AddToCartValues,
 ) {
   const selectedVariant = findVariant(product, selectedOptions);
@@ -49,4 +55,21 @@ export async function addToCart(
       },
     ],
   });
+}
+
+export interface UpdateCartItemQuantity {
+  productId: string;
+  newQuantity: number;
+}
+
+export async function updateCartItemQuantity(
+  wixClient: WixClient,
+  { productId, newQuantity }: UpdateCartItemQuantity,
+) {
+  return wixClient.currentCart.updateCurrentCartLineItemQuantity([
+    {
+      _id: productId,
+      quantity: newQuantity,
+    },
+  ]);
 }

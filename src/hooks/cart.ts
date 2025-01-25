@@ -1,6 +1,12 @@
-import { addToCart, getCart } from "@/app/wix-api/cart";
+import {
+  addToCart,
+  getCart,
+  updateCartItemQuantity,
+  UpdateCartItemQuantity,
+} from "@/app/wix-api/cart";
 import { wixBrowserClient } from "@/lib/wix-client.browser";
 import {
+  MutationKey,
   QueryKey,
   useMutation,
   useQuery,
@@ -29,13 +35,62 @@ export function useAddToCart() {
     mutationFn: (values: IAddToCartButton) =>
       addToCart(wixBrowserClient, values),
     onSuccess(data) {
-      toast({ description: "Položka přidána do košíku"});
-      queryClient.cancelQueries({queryKey});
+      toast({ description: "Položka přidána do košíku" });
+      queryClient.cancelQueries({ queryKey });
       queryClient.setQueryData(queryKey, data.cart);
-    },    
-    onError(error){
-      console.error(error)
-      toast({variant:"destructive", description: "Produkt nelze přidat do košíku."})
-    }
+    },
+    onError(error) {
+      console.error(error);
+      toast({
+        variant: "destructive",
+        description: "Produkt nelze přidat do košíku.",
+      });
+    },
+  });
+}
+
+export function useUpdateItemQuantity() {
+  const queryClient = useQueryClient();
+
+  const { toast } = useToast();
+
+  const mutationKey: MutationKey = ["updateCartItemQuantity"];
+
+  return useMutation({
+    mutationKey,
+    mutationFn: (values: UpdateCartItemQuantity) =>
+      updateCartItemQuantity(wixBrowserClient, values),
+    onMutate: async ({ productId, newQuantity }) => {
+      await queryClient.cancelQueries({ queryKey });
+
+      const previousState =
+        queryClient.getQueryData<currentCart.Cart>(queryKey);
+
+      queryClient.setQueryData<currentCart.Cart>(queryKey, (oldData) => ({
+        ...oldData,
+        lineItems: oldData?.lineItems?.map((lineItem) =>
+          lineItem._id === productId
+            ? {
+                ...lineItem,
+                quantity: newQuantity,
+              }
+            : lineItem,
+        ),
+      }));
+      return { previousState };
+    },
+    onError(error, variant, context) {
+      queryClient.setQueryData(queryKey, context?.previousState);
+      console.error(error);
+      toast({
+        variant: "destructive",
+        description: "Něco se pokazilo, prosím opakujte akci.",
+      });
+    },
+    onSettled() {
+      if (queryClient.isMutating({ mutationKey }) === 1) {
+        queryClient.invalidateQueries({ queryKey });
+      }
+    },
   });
 }
