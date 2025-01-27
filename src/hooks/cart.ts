@@ -1,6 +1,7 @@
 import {
   addToCart,
   getCart,
+  removeCartItem,
   updateCartItemQuantity,
   UpdateCartItemQuantity,
 } from "@/app/wix-api/cart";
@@ -79,7 +80,7 @@ export function useUpdateItemQuantity() {
       }));
       return { previousState };
     },
-    onError(error, variant, context) {
+    onError(error, variables, context) {
       queryClient.setQueryData(queryKey, context?.previousState);
       console.error(error);
       toast({
@@ -92,5 +93,38 @@ export function useUpdateItemQuantity() {
         queryClient.invalidateQueries({ queryKey });
       }
     },
+  });
+}
+
+export function useRemoveCartItem() {
+  const queryClient = useQueryClient();
+
+  const { toast } = useToast();
+
+  return useMutation({
+    mutationFn: (productId: string) =>
+      removeCartItem(wixBrowserClient, productId),
+    onMutate: async (productId) => {
+      await queryClient.cancelQueries({ queryKey });
+
+      const previousState =
+        queryClient.getQueryData<currentCart.Cart>(queryKey);
+
+      queryClient.setQueryData<currentCart.Cart>(queryKey, (oldData) => ({
+        ...oldData,
+        lineItems: oldData?.lineItems?.filter(
+          (lineItem) => lineItem._id !== productId,
+        ),
+      }));
+      return { previousState };
+    },
+    onError(error, variables, context) {
+      queryClient.setQueryData(queryKey, context?.previousState);
+      console.error(error);
+      toast({
+        variant: "destructive",
+        description: "Něco se pokazilo, při mazání položky.",
+      });
+    },onSettled(){queryClient.invalidateQueries({queryKey})}
   });
 }

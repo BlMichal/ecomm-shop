@@ -73,3 +73,7 @@ export async function updateCartItemQuantity(
     },
   ]);
 }
+
+export async function removeCartItem(wixClient: WixClient, productId: string) {
+  return wixClient.currentCart.removeLineItemsFromCurrentCart([productId]);
+}
