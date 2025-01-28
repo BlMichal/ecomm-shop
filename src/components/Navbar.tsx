@@ -1,4 +1,4 @@
-import ShoppingCartButton from "@/app/ShoppingCartButton";
+import ShoppingCartButton from "@/components/ShoppingCartButton";
 import { getCart } from "@/app/wix-api/cart";
 import logo from "@/assets/logo-navbar.png";
 import { getWixServerClient } from "@/lib/wix-client.server";

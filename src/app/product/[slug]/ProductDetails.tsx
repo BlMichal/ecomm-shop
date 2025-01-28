@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/accordion";
 import AddToCartButton from "@/components/AddToCartButton";
 import { Button } from "@/components/ui/button";
+import BackInStockButton from "@/components/BackInStockButton";
 
 interface IProductDetails {
   product: products.Product;
@@ -105,9 +106,11 @@ export default function ProductDetails({ product }: IProductDetails) {
                     )))}
               </>
             ) : (
-              <span className="py-2 text-destructive font-semibold">
-                VYPRODÁNO
-              </span>
+
+              <BackInStockButton product={product} selectedOptions={selectedOptions} />
+              // <span className="py-2 text-destructive font-semibold">
+              //   VYPRODÁNO
+              // </span>
             )}
           </div>
         </div>
