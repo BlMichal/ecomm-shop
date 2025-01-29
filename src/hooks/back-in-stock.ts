@@ -16,7 +16,7 @@ export function useCreateBackInStockNotificationRequest() {
       console.error(error);
       if (
         (error as any).details.applicationError.code ===
-        "BACK_IN_STOCK_NOTIFICATION_REQUEST_ALREDY_EXISTS"
+        "BACK_IN_STOCK_NOTIFICATION_REQUEST_ALREADY_EXISTS"
       ) {
         toast({
           variant: "destructive",

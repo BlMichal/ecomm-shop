@@ -4,6 +4,7 @@ import logo from "@/assets/logo-navbar.png";
 import { getWixServerClient } from "@/lib/wix-client.server";
 import Image from "next/image";
 import Link from "next/link";
+import UserButton from "./UserButton";
 
 
 
@@ -16,9 +17,11 @@ export default async function Navbar() {
         <Link href="/" className="flex items-center gap-2">
           <Image src={logo} alt="Flow Shop logo" width={100} height={60} />
         </Link>
-        <span>
-        <ShoppingCartButton initialData={cart} />
-        </span>
+        <div className="flex">
+        <UserButton />
+        
+        <ShoppingCartButton initialData={cart} />          
+        </div>        
       </div>
     </header>
   );
